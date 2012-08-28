@@ -3,15 +3,8 @@
 use Modern::Perl;
 use File::Slurp qw(read_file);
 use System::Command;
-use Getopt::Compact;
 use Carp qw(confess);
 use List::MoreUtils qw(apply);
-
-my $opts = Getopt::Compact->new(
-  struct => [
-      [[qw(J maintain-job-name)], q(Maintain unmodified job name)],
-  ]
-)->opts();
 
 my $sbatch_cmd       = q{sbatch};
 my $range_regexp     = qr{#SARRAY\s+\-\-range\s*=\s*([\d,\s-]+)};
@@ -85,7 +78,7 @@ sub get_batch_job_name {
 
 sub generate_job_name {
   my ($name, $id) = @_;
-  return ($opts->{'maintain-job-name'}) ? $name : sprintf q{%s[%d]}, $name, $id;
+  return sprintf q{%s[%d]}, $name, $id;
 }
 
 __END__
@@ -122,11 +115,10 @@ parameters, loading differing data files or anything that requires a unique inde
   sarray batch_file
 
   $ sarray ./job.txt
-  $ sarray -J ./job.txt
 
 =head1 REQUIRED ARGUMENTS
 
-This script only accepts an batch script suitable for sbatch. The batch script
+This script only accepts a script suitable to sbatch. The batch script
 must include the comment marker to indicate the range of array indexes. The comment
 is similiar to sbatch comments that must start in column zero of the script. The value
 can be a range separated by a dash ( - ), a comma separated list of index numbers or both.
@@ -145,11 +137,7 @@ each iteration through the index(es) you provided via the --range option.
 
 =head1 OPTIONS
 
-=over
-
-=item B<-J>      Do not modify the job name
-
-=back
+None
 
 =head1 CONFIGURATION
 
@@ -171,6 +159,10 @@ None
 =item File::Slurp
 
 =item System::Command
+
+=item Carp
+
+=item List::MoreUtils
 
 =back
 
